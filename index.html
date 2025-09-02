@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>İyi ki Doğdun 🎉</title>
+  
+  <!-- Open Graph (WhatsApp / sosyal önizleme) -->
+  <meta property="og:title" content="Sana özel bir sürpriz 🎁" />
+  <meta property="og:description" content="Tıkla ve sürprizini gör!" />
+  <meta property="og:type" content="website" />
+  <!-- Küçük inline SVG önizleme görseli -->
+  <meta property="og:image" content="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTIwMCcgaGVpZ2h0PSc2MzAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGxpbmVhckdyYWRpZW50IGlkPSdnJyB4MT0nMCUnIHkxPScwJScgeDI9JzEwMCUnIHkyPScxMDAlJz48c3RvcCBvZmZzZXQ9JzAlJyBzdG9wLWNvbG9yPScjZjBmNWY5Jy8+PHN0b3Agb2Zmc2V0PScxMDAlJyBzdG9wLWNvbG9yPScjZmRmM2YxJy8+PC9saW5lYXJHcmFkaWVudD48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyBmaWxsPSJ1cmwoI2cpIiByeD0nMzAnLz48dGV4dCB4PSc1MCUnIHk9JzUwJScgZG9taW5hbnQtYmFzZWxpbmU9J21pZGRsZScgdGV4dC1hbmNob3I9J21pZGRsZScgc3R5bGU9J2ZpbGw6I2YyZjJmMjtmb250LXNpemU6MTAwcHg7Zm9udC13ZWlnaHQ6NzAwO2ZvbnQtZmFtaWx5OnN5c3RlbS1VaSwgQXJpYWwsIHNhbnMtc2VyaWZJKTsnPuKZpSA8L3RleHQ+PC9zdmc+" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg1: #a18cd1; /* varsayılan tema: lavender */
+      --bg2: #fbc2eb;
+      --card-bg: rgba(255, 255, 255, 0.24);
+      --card-stroke: rgba(255, 255, 255, 0.35);
+      --text: #111827;
+      --muted: #374151;
+      --accent: #8b5cf6;
+      --btn: #111827;
+      --btn-text: #fff;
+    }
+
+    /* Temalar */
+    .t-lavender{ --bg1:#a18cd1; --bg2:#fbc2eb; --accent:#8b5cf6; }
+    .t-sunset { --bg1:#ff9a9e; --bg2:#fecfef; --accent:#ef4444; }
+    .t-sky    { --bg1:#8ec5fc; --bg2:#e0c3fc; --accent:#2563eb; }
+    .t-forest { --bg1:#c1dfc4; --bg2:#deecdd; --accent:#059669; }
+    .t-dark   { --bg1:#0f172a; --bg2:#1f2937; --card-bg:rgba(0,0,0,.35); --card-stroke:rgba(255,255,255,.15); --text:#f3f4f6; --muted:#d1d5db; --btn:#f3f4f6; --btn-text:#0f172a; --accent:#f59e0b; }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 28px 16px 80px;
+      position: relative;
+    }
+
+    .card {
+      width: min(720px, 100%);
+      background: var(--card-bg);
+      border: 1px solid var(--card-stroke);
+      backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.12);
+      transform: translateY(10px) scale(.98);
+      opacity: .0;
+      transition: all .6s cubic-bezier(.2,.8,.2,1);
+    }
+    .card.show { transform: translateY(0) scale(1); opacity: 1; }
+
+    .title {
+      font-size: clamp(28px, 6vw, 44px);
+      font-weight: 800;
+      letter-spacing: .5px;
+      margin: 4px 0 12px;
+      line-height: 1.1;
+    }
+    .subtitle { color: var(--muted); margin: 0 0 18px; }
+
+    .avatar {
+      width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+      border: 3px solid var(--card-stroke); box-shadow: 0 6px 18px rgba(0,0,0,.18);
+    }
+    .avatar-wrap { display:flex; align-items:center; gap:16px; margin-bottom: 14px; }
+
+    .msg {
+      font-size: clamp(16px, 2.5vw, 18px);
+      line-height: 1.7;
+      margin: 8px 0 18px;
+      white-space: pre-wrap;
+    }
+
+    .signature { font-weight: 600; opacity: .85; }
+
+    .actions { display:flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+    .btn {
+      border: 0; padding: 12px 16px; border-radius: 14px; cursor: pointer;
+      font-weight: 700; letter-spacing: .2px; background: var(--btn); color: var(--btn-text);
+      transition: transform .08s ease, box-shadow .2s ease, opacity .2s;
+      box-shadow: 0 4px 14px rgba(0,0,0,.18);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn.secondary { background: transparent; color: var(--text); border: 1px dashed var(--card-stroke); }
+
+    .chip {
+      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.4); border: 1px solid var(--card-stroke); font-size: 12px;
+    }
+
+    /* Balonlar */
+    .balloon { position: absolute; bottom: -140px; width: 28px; height: 38px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      background: rgba(255,255,255,.8); box-shadow: inset 0 -6px 14px rgba(0,0,0,.12);
+      animation: fly var(--dur) linear infinite; left: var(--left);
+    }
+    .balloon::after { content:''; position:absolute; left:50%; top:38px; width:2px; height:50px; background: rgba(255,255,255,.65); transform: translateX(-50%); }
+    @keyframes fly { to { transform: translateY(-130vh) translateX(var(-- drift, 0px)); opacity: .9; } }
+
+    /* Alt bilgi */
+    .footer { position: fixed; inset: auto 0 12px; display:flex; justify-content:center; }
+    .footer .chip { background: rgba(255,255,255,.3); }
+
+    /* Küçük ekran iyileştirmeleri */
+    @media (max-width: 480px) { .avatar-wrap { flex-direction: row; } }
+  </style>
+</head>
+<body class="t-lavender">
+  <div class="wrap">
+    <!-- Dekoratif balonlar JS ile eklenecek -->
+
+    <div class="card" id="card">
+      <div class="avatar-wrap">
+        <img id="avatar" class="avatar" alt="Profil" src="" style="display:none" />
+        <div>
+          <div class="chip" id="chip">🎂 Doğum Günü Sürprizi</div>
+          <h1 class="title">İyi ki doğdun, <span id="name">Dostum</span>! 🎉</h1>
+          <p class="subtitle" id="subtitle">Bugün tamamen senin günün — kutlamaya hazır mısın?</p>
+        </div>
+      </div>
+
+      <p class="msg" id="message">Nice mutlu, sağlıklı ve başarı dolu yaşlara! 🎂✨\n\nSeninle daha nice güzel anılar biriktirmek dileğiyle…</p>
+      <p class="signature" id="from" style="display:none">— </p>
+
+      <div class="actions">
+        <button class="btn" id="revealBtn">🎁 Sürprizi Aç</button>
+        <button class="btn secondary" id="confettiBtn">🎊 Konfeti</button>
+        <button class="btn secondary" id="copyBtn">🔗 Linki Kopyala</button>
+        <button class="btn secondary" id="musicBtn" style="display:none">▶︎ Müzik</button>
+      </div>
+    </div>
+
+    <div class="footer"><span class="chip">✨ Temalar: lavender · sunset · sky · forest · dark</span></div>
+  </div>
+
+  <!-- Konfeti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <script>
+    // Yardımcılar
+    const $ = (s) => document.querySelector(s);
+    const params = new URLSearchParams(location.search);
+    const get = (k, d='') => params.get(k) || d;
+
+    // Kişiselleştirme parametreleri
+    const p = {
+      name: get('name', 'Dostum'),
+      message: get('message', ''),
+      from: get('from', ''),
+      theme: get('theme', 'lavender'), // lavender | sunset | sky | forest | dark
+      photo: get('photo', ''),         // fotoğraf URL'si
+      music: get('music', ''),         // mp3 URL'si
+      subtitle: get('subtitle', ''),
+      emoji: get('emoji', '🎉')
+    };
+
+    // Temayı uygula
+    const themeClass = {
+      lavender: 't-lavender', sunset: 't-sunset', sky:'t-sky', forest:'t-forest', dark:'t-dark'
+    }[p.theme] || 't-lavender';
+    document.body.className = themeClass;
+
+    // Metinleri doldur
+    $('#name').textContent = p.name;
+    if (p.subtitle) $('#subtitle').textContent = p.subtitle;
+    if (p.message) $('#message').textContent = p.message;
+    if (p.from) { const f=$('#from'); f.style.display='block'; f.textContent = `— ${p.from}`; }
+    $('#chip').textContent = `🎂 ${p.name} için Sürpriz`;
+
+    // Fotoğraf
+    if (p.photo) { const av=$('#avatar'); av.src=p.photo; av.style.display='block'; }
+
+    // Balonlar (rasgele)
+    const wrap = document.querySelector('.wrap');
+    const colors = ['#fff', '#ffe4e6', '#e0f2fe', '#dcfce7', '#ede9fe'];
+    const balonSayisi = 12;
+    for (let i=0;i<balonSayisi;i++){
+      const b = document.createElement('div');
+      b.className = 'balloon';
+      const left = Math.random()*100 + 'vw';
+      const dur = (10+Math.random()*10)+'s';
+      b.style.setProperty('--left', left);
+      b.style.setProperty('--dur', dur);
+      b.style.background = colors[i%colors.length];
+      b.style.setProperty('--drift', (Math.random()<.5?'-':'') + (10+Math.random()*20)+'px');
+      wrap.appendChild(b);
+    }
+
+    // Konfeti
+    function popConfetti(){
+      const duration = 1.2 * 1000;
+      const end = Date.now() + duration;
+      (function frame(){
+        confetti({
+          particleCount: 50,
+          startVelocity: 45,
+          spread: 60,
+          origin: { x: Math.random(), y: Math.random()*0.3 + 0.1 }
+        });
+        if (Date.now() < end) requestAnimationFrame(frame);
+      })();
+    }
+
+    // Kartı göster + konfeti
+    $('#revealBtn').addEventListener('click', () => {
+      $('#card').classList.add('show');
+      popConfetti();
+    });
+
+    // Konfeti butonu
+    $('#confettiBtn').addEventListener('click', popConfetti);
+
+    // Linki kopyala (mevcut parametrelerle)
+    $('#copyBtn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        const old = $('#copyBtn').textContent;
+        $('#copyBtn').textContent = '✅ Kopyalandı!';
+        setTimeout(()=> $('#copyBtn').textContent = old, 1500);
+      } catch (e) {
+        alert('Linki kopyalayamadım. Adres çubuğundan kopyalayabilirsin.');
+      }
+    });
+
+    // Müzik (opsiyonel)
+    let audio; let playing = false;
+    if (p.music) {
+      audio = new Audio(p.music);
+      const btn = $('#musicBtn');
+      btn.style.display = 'inline-block';
+      btn.addEventListener('click', () => {
+        if (!playing) { audio.play(); btn.textContent = '⏸︎ Durdur'; playing = true; }
+        else { audio.pause(); btn.textContent = '▶︎ Müzik'; playing = false; }
+      });
+    }
+
+    // İlk açılışta kartı hafifçe görünür yap
+    setTimeout(()=> document.getElementById('card').classList.add('show'), 200);
+
+    // Yardımcı: Paylaşılabilir örnek URL oluşturucu (kullan-at)
+    window.buildUrl = function(opts={}){
+      const u = new URL(location.href);
+      const sp = u.searchParams;
+      Object.entries(opts).forEach(([k,v])=> v? sp.set(k, v) : sp.delete(k));
+      return u.toString();
+    }
+  </script>
+</body>
+</html>
