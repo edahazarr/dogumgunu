@@ -38,6 +38,7 @@
       transform: none !important;
       opacity: 1 !important;
       text-align: center;
+      z-index: 1; /* kart üste gelsin */
     }
 
     .chip{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
@@ -79,7 +80,8 @@
     /* Balonlar */
     .balloon{position:absolute; bottom:-140px; width:28px; height:38px; border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
       background:rgba(255,255,255,.85); box-shadow:inset 0 -6px 14px rgba(0,0,0,.12);
-      animation:fly var(--dur) linear infinite; left:var(--left)}
+      animation:fly var(--dur) linear infinite; left:var(--left);
+      pointer-events: none; z-index:0; }
     .balloon::after{content:''; position:absolute; left:50%; top:38px; width:2px; height:50px; background:rgba(255,255,255,.65); transform:translateX(-50%)}
     @keyframes fly{to{transform:translateY(-130vh) translateX(var(--drift,0px)); opacity:.95}}
 
@@ -115,12 +117,10 @@
       <!-- Açıldıktan sonra görünen pano -->
       <div id="opened" class="mesaj-wrap" aria-live="polite">
         <h1 class="mesaj-title fade-in">🎉 İyi ki doğdun, Sevgilim! ❤️</h1>
-        
-        <p class="mesaj-text fade-in" id="message">Aşkitom doğum günün kutlu olsun! 🎂✨ Seni çok seviyorum.İyi ki varsın...
+        <p class="mesaj-text fade-in" id="message">Aşkitom doğum günün kutlu olsun! 🎂✨ Seni çok seviyorum. İyi ki varsın...
 Birlikte nice güzel uzun senelerimiz olsun birtanem. ❤︎ 
-Senle olduğum her an için şükrediyorum.İyi ki biz iyi ki sen aşkım.♥︎ 
-HAPPY BİRTHDAY AŞKİTOLARIN KRALIIII!!!♥︎♥︎♥︎♥︎</p>
-        <p class="signature fade-in" id="from" style="display:none">— </p>
+Senle olduğum her an için şükrediyorum. İyi ki biz, iyi ki sen aşkım. ♥︎ 
+HAPPY BİRTHDAY AŞKİTOLARIN KRALIIII!!! ♥︎♥︎♥︎♥︎</p>
         <div class="actions fade-in" id="actions" style="display:none">
           <button class="btn secondary" id="confettiBtn">🎊 Konfeti</button>
           <button class="btn secondary" id="copyBtn">🔗 Linki Kopyala</button>
@@ -139,10 +139,8 @@ HAPPY BİRTHDAY AŞKİTOLARIN KRALIIII!!!♥︎♥︎♥︎♥︎</p>
     const get = (k,d='') => params.get(k)||d;
 
     const p = {
-      name: get('name','Dostum'),
       message: get('message',''),
       from: get('from',''),
-      subtitle: get('subtitle',''),
       music: get('music','')
     };
 
@@ -159,13 +157,10 @@ HAPPY BİRTHDAY AŞKİTOLARIN KRALIIII!!!♥︎♥︎♥︎♥︎</p>
       wrap.appendChild(b);
     }
 
-    // Metinleri doldur
-    $('#name').textContent=p.name;
-    if(p.subtitle) $('#subtitle').textContent=p.subtitle;
+    // Mesaj güncelle
     if(p.message) $('#message').textContent=p.message;
-    if(p.from){ const f=$('#from'); f.style.display='block'; f.textContent=`— ${p.from}`; }
+    if(p.from){ const f=document.createElement('p'); f.textContent=`— ${p.from}`; $('#opened').appendChild(f); }
     $('#chip').textContent = " Sevgilim İçin Sürpriz!🎂💋ྀིྀི";
-
 
     // Konfeti
     function popConfetti(){
