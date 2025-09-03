@@ -17,9 +17,10 @@
 
   <style>
     :root{
+      --card-bg: rgba(255,255,255,.28);
+      --card-stroke: rgba(255,255,255,.35);
       --text:#111827; --muted:#374151;
       --btn:#111827; --btn-text:#fff;
-      --shadow: 0 10px 40px rgba(0,0,0,.18);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -29,52 +30,57 @@
       color:var(--text); overflow-x:hidden;
     }
     .wrap{min-height:100%; display:grid; place-items:center; padding:28px 16px 80px; position:relative;}
-
-    /* ŞEFFAF KART YOK – sadece merkezleyici */
-    .center{display:flex; flex-direction:column; align-items:center; gap:14px}
+    /* ŞEFFAF DİKDÖRTGENİ KALDIR */
+    .card{
+      background: transparent !important;
+      border: none !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      border-radius: 0 !important;
+      padding: 0 !important;
+      width: auto !important;
+      transform: none !important;
+      opacity: 1 !important;
+      text-align: center;
+    }
+    .card.show{transform:translateY(0) scale(1); opacity:1}
 
     .chip{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
-      background:rgba(255,255,255,.5); border:1px solid rgba(255,255,255,.4); font-size:12px; backdrop-filter:blur(6px);
-      box-shadow:0 4px 14px rgba(0,0,0,.12);
-    }
+      background:rgba(255,255,255,.5); border:1px solid var(--card-stroke); font-size:12px; margin-bottom:10px;}
 
-    /* ENVELOPE (inline SVG) – BÜYÜK */
+    /* ENVELOPE (inline SVG) */
     .envelope{
-      background:transparent; border:0; padding:0; cursor:pointer; margin:4px auto 0; display:block;
+      background:transparent; border:0; padding:0; cursor:pointer; margin:8px auto 6px; display:block;
       perspective:900px; user-select:none;
-      transition:transform .35s ease;
     }
-    .envelope:hover{transform:translateY(-2px)}
-    .envelope svg{width:min(420px, 86vw); height:auto; display:block; filter:drop-shadow(0 6px 14px rgba(0,0,0,.18))}
-    .flap{transform-box:fill-box; transform-origin:50% 40%; transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+    /* Mektup boyutu (2 kat daha büyük) */
+.envelope svg{
+  width: min(520px, 90vw);   /* eski 260px → 520px yaptık */
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.18));
+}
     .envelope.open .flap{transform:rotateX(180deg)}
+    /* kalp minik nabız efekti */
     .heart{animation:pulse 1.6s ease-in-out infinite}
     .envelope.open .heart{animation:none; opacity:.15}
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 
-    /* AÇILAN MESAJ KARTI – kalpli arkaplan */
-    .msg-card{
-      display:none;
-      max-width: min(800px, 94vw);
-      padding: 20px 22px;
-      border-radius: 18px;
-      background: url("arkaplankalp.jpeg") center/cover no-repeat;
-      box-shadow: var(--shadow);
-      text-align:center;
-    }
-    .msg-card.show{display:block; animation:fadeIn .9s ease forwards; opacity:0}
+    /* Açıldıktan sonra çıkan mesaj */
+    .mesaj-wrap{display:none}
+    .mesaj-wrap.show{display:block}
+    .mesaj-title{font-size:clamp(26px,5vw,40px); font-weight:800; margin:8px 0 6px}
+    .mesaj-sub{color:var(--muted); margin:0 0 18px}
+    .mesaj-text{font-size:clamp(16px,2.4vw,18px); line-height:1.7; white-space:pre-wrap}
+    .fade-in{animation:fadeIn .9s ease forwards; opacity:0}
     @keyframes fadeIn{from{opacity:0; transform:scale(.98)} to{opacity:1; transform:scale(1)}}
-
-    .title{font-size:clamp(28px, 6vw, 44px); font-weight:800; margin:4px 0 10px}
-    .subtitle{color:var(--muted); margin:0 0 10px}
-    .text{font-size:clamp(16px, 2.4vw, 18px); line-height:1.7; white-space:pre-wrap; margin:6px 0 10px}
-    .signature{font-weight:600; opacity:.85; margin:4px 0 0}
 
     .actions{display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin-top:10px}
     .btn{border:0; padding:12px 16px; border-radius:14px; cursor:pointer; font-weight:700; letter-spacing:.2px;
       background:var(--btn); color:var(--btn-text); box-shadow:0 4px 14px rgba(0,0,0,.18); transition:transform .08s, box-shadow .2s}
     .btn:hover{transform:translateY(-1px)}
-    .btn.secondary{background:transparent; color:var(--text); border:1px dashed rgba(0,0,0,.2)}
+    .btn.secondary{background:transparent; color:var(--text); border:1px dashed var(--card-stroke)}
 
     /* Balonlar */
     .balloon{position:absolute; bottom:-140px; width:28px; height:38px; border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
@@ -84,25 +90,32 @@
     @keyframes fly{to{transform:translateY(-130vh) translateX(var(--drift,0px)); opacity:.95}}
 
     .footer{position:fixed; inset:auto 0 12px; display:flex; justify-content:center}
-    .footer .chip{background:rgba(255,255,255,.6); backdrop-filter:blur(6px)}
+    .footer .chip{background:rgba(255,255,255,.4)}
+
+    @media (max-width:480px){.card{padding:22px}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <!-- Balonlar JS ile eklenecek -->
 
-    <div class="center" id="center">
+    <div class="card" id="card">
       <div class="chip" id="chip">🎂 Doğum Günü Sürprizi</div>
 
-      <!-- KAPALI MEKTUP -->
+      <!-- KAPALI MEKTUP (inline SVG, dış dosya yok) -->
       <button id="envelope" class="envelope" aria-label="Mektubu aç">
         <svg viewBox="0 0 200 150" role="img" aria-labelledby="envTitle">
           <title id="envTitle">Kalpli mektup</title>
+          <!-- zemin gölge -->
           <ellipse cx="100" cy="128" rx="68" ry="10" fill="rgba(0,0,0,.12)"/>
+          <!-- zarf gövdesi -->
           <rect x="25" y="45" width="150" height="90" rx="10" fill="#ffffff"/>
+          <!-- ön kat çizgileri -->
           <path d="M25 60 L100 110 L175 60" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+          <!-- üst kapak (flap) -->
           <g class="flap">
             <path d="M25 60 L100 20 L175 60 Z" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>
+            <!-- kalp -->
             <path class="heart" d="M100 55
               c -10 -12 -28 -2 -22 12
               c 5 12 22 20 22 20
@@ -113,16 +126,16 @@
         </svg>
       </button>
 
-      <!-- AÇILDIKTAN SONRA GÖRÜNEN MESAJ KARTI (kalpli arkaplan) -->
-      <div id="msgCard" class="msg-card" aria-live="polite">
-        <h1 class="title">🎉 İyi ki doğdun, <span id="name">Dostum</span>!</h1>
-        <p class="subtitle" id="subtitle">Bugün tamamen senin günün — kutlamaya hazır mısın?</p>
-        <p class="text" id="message">Nice mutlu, sağlıklı ve başarı dolu yaşlara! 🎂✨
+      <!-- AÇILDIKTAN SONRA GÖRÜNEN MESAJ -->
+      <div id="opened" class="mesaj-wrap" aria-live="polite">
+        <h1 class="mesaj-title fade-in">🎉 İyi ki doğdun, <span id="name">Dostum</span>!</h1>
+        <p class="mesaj-sub fade-in" id="subtitle">Bugün tamamen senin günün — kutlamaya hazır mısın?</p>
+        <p class="mesaj-text fade-in" id="message">Nice mutlu, sağlıklı ve başarı dolu yaşlara! 🎂✨
 
 Seninle daha nice güzel anılar biriktirmek dileğiyle…</p>
-        <p class="signature" id="from" style="display:none">— </p>
+        <p class="signature fade-in" id="from" style="display:none">— </p>
 
-        <div class="actions" id="actions" style="display:none">
+        <div class="actions fade-in" id="actions" style="display:none">
           <button class="btn secondary" id="confettiBtn">🎊 Konfeti</button>
           <button class="btn secondary" id="copyBtn">🔗 Linki Kopyala</button>
           <button class="btn secondary" id="musicBtn" style="display:none">▶︎ Müzik</button>
@@ -191,19 +204,22 @@ Seninle daha nice güzel anılar biriktirmek dileğiyle…</p>
       });
     }
 
+    // İlk giriş animasyonu
+    setTimeout(()=> $('#card').classList.add('show'), 200);
+
     // Mektubu aç
     const envelope = $('#envelope');
-    const msgCard = $('#msgCard');
+    const opened = $('#opened');
     envelope.addEventListener('click', ()=>{
       envelope.classList.add('open');
       setTimeout(()=>{
-        msgCard.classList.add('show');
+        opened.classList.add('show');
         $('#actions').style.display='flex';
         popConfetti();
       }, 620);
     });
 
-    // Link kopyalama + ekstra konfeti
+    // Butonlar
     $('#confettiBtn').addEventListener('click', popConfetti);
     $('#copyBtn').addEventListener('click', async ()=>{
       try{
