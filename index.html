@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>İyi ki Doğdun 🎉</title>
 
-  <!-- WhatsApp / sosyal önizleme -->
+  <!-- Sosyal önizleme -->
   <meta property="og:title" content="Sana özel bir sürpriz 🎁" />
   <meta property="og:description" content="Tıkla ve sürprizini gör!" />
   <meta property="og:type" content="website" />
@@ -16,133 +16,106 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
 
   <style>
-    :root {
-      --card-bg: rgba(255, 255, 255, 0.28);
-      --card-stroke: rgba(255, 255, 255, 0.35);
-      --text: #111827;
-      --muted: #374151;
-      --btn: #111827;
-      --btn-text: #fff;
+    :root{
+      --card-bg: rgba(255,255,255,.28);
+      --card-stroke: rgba(255,255,255,.35);
+      --text:#111827; --muted:#374151;
+      --btn:#111827; --btn-text:#fff;
     }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: url("fotografimiz.jpeg") no-repeat center center / cover;
-      color: var(--text);
-      overflow-x: hidden;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      background:url("fotografimiz.jpeg") no-repeat center center/cover;
+      color:var(--text); overflow-x:hidden;
     }
-
-    .wrap {
-      min-height: 100%;
-      display: grid;
-      place-items: center;
-      padding: 28px 16px 80px;
-      position: relative;
+    .wrap{min-height:100%; display:grid; place-items:center; padding:28px 16px 80px; position:relative;}
+    .card{
+      width:min(720px,100%); background:var(--card-bg); border:1px solid var(--card-stroke);
+      backdrop-filter:blur(10px); border-radius:28px; padding:28px; text-align:center;
+      box-shadow:0 10px 40px rgba(0,0,0,.18);
+      transform:translateY(10px) scale(.98); opacity:0; transition:all .6s cubic-bezier(.2,.8,.2,1);
     }
+    .card.show{transform:translateY(0) scale(1); opacity:1}
 
-    .card {
-      width: min(720px, 100%);
-      background: var(--card-bg);
-      border: 1px solid var(--card-stroke);
-      backdrop-filter: blur(10px);
-      border-radius: 28px;
-      padding: 28px;
-      box-shadow: 0 10px 40px rgba(0,0,0,.18);
-      transform: translateY(10px) scale(.98);
-      opacity: 0;
-      transition: all .6s cubic-bezier(.2,.8,.2,1);
-      text-align: center;
+    .chip{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+      background:rgba(255,255,255,.5); border:1px solid var(--card-stroke); font-size:12px; margin-bottom:10px;}
+
+    /* ENVELOPE (inline SVG) */
+    .envelope{
+      background:transparent; border:0; padding:0; cursor:pointer; margin:8px auto 6px; display:block;
+      perspective:900px; user-select:none;
     }
-    .card.show { transform: translateY(0) scale(1); opacity: 1; }
+    .envelope svg{width:260px; height:190px; display:block; margin:0 auto; filter:drop-shadow(0 6px 14px rgba(0,0,0,.18))}
+    /* flap animasyonu */
+    .flap{transform-box:fill-box; transform-origin:50% 40%; transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+    .envelope.open .flap{transform:rotateX(180deg)}
+    /* kalp minik nabız efekti */
+    .heart{animation:pulse 1.6s ease-in-out infinite}
+    .envelope.open .heart{animation:none; opacity:.15}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 
-    .chip {
-      display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
-      background: rgba(255,255,255,.5); border: 1px solid var(--card-stroke); font-size: 12px;
-      margin-bottom: 10px;
-    }
+    /* Açıldıktan sonra çıkan mesaj */
+    .mesaj-wrap{display:none}
+    .mesaj-wrap.show{display:block}
+    .mesaj-title{font-size:clamp(26px,5vw,40px); font-weight:800; margin:8px 0 6px}
+    .mesaj-sub{color:var(--muted); margin:0 0 18px}
+    .mesaj-text{font-size:clamp(16px,2.4vw,18px); line-height:1.7; white-space:pre-wrap}
+    .fade-in{animation:fadeIn .9s ease forwards; opacity:0}
+    @keyframes fadeIn{from{opacity:0; transform:scale(.98)} to{opacity:1; transform:scale(1)}}
 
-    .title {
-      font-size: clamp(28px, 6vw, 44px);
-      font-weight: 800;
-      letter-spacing: .5px;
-      margin: 4px 0 12px;
-      line-height: 1.1;
-    }
-    .subtitle { color: var(--muted); margin: 0 0 18px; }
-
-    .msg {
-      font-size: clamp(16px, 2.5vw, 18px);
-      line-height: 1.7;
-      margin: 8px 0 18px;
-      white-space: pre-wrap;
-    }
-
-    .signature { font-weight: 600; opacity: .85; }
-
-    .actions { display:flex; justify-content:center; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
-    .btn {
-      border: 0; padding: 12px 16px; border-radius: 14px; cursor: pointer;
-      font-weight: 700; letter-spacing: .2px; background: var(--btn); color: var(--btn-text);
-      transition: transform .08s ease, box-shadow .2s ease, opacity .2s;
-      box-shadow: 0 4px 14px rgba(0,0,0,.18);
-    }
-    .btn:hover { transform: translateY(-1px); }
-    .btn.secondary { background: transparent; color: var(--text); border: 1px dashed var(--card-stroke); }
-
-    /* Mektup ve açılınca çıkan mesaj */
-    .mektup {
-      max-width: 260px;
-      width: 100%;
-      display: block;
-      margin: 8px auto 4px;
-      cursor: pointer;
-      transition: transform .6s ease, opacity .6s ease;
-      user-select: none;
-    }
-    .mektup:hover { transform: translateY(-2px) scale(1.02); }
-    .mektup.hide { transform: scale(0.8) rotateX(90deg); opacity: 0; }
-
-    .mesaj-wrap { display: none; }
-    .mesaj-wrap.show { display: block; }
-    .mesaj-title { font-size: clamp(26px, 5vw, 40px); font-weight: 800; margin: 8px 0 6px; }
-    .mesaj-sub { color: var(--muted); margin: 0 0 18px; }
-    .mesaj-text { font-size: clamp(16px, 2.4vw, 18px); line-height: 1.7; white-space: pre-wrap; }
-    .fade-in { animation: fadeIn 0.9s ease forwards; opacity: 0; }
-    @keyframes fadeIn { from { opacity: 0; transform: scale(.98); } to { opacity: 1; transform: scale(1); } }
+    .actions{display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin-top:10px}
+    .btn{border:0; padding:12px 16px; border-radius:14px; cursor:pointer; font-weight:700; letter-spacing:.2px;
+      background:var(--btn); color:var(--btn-text); box-shadow:0 4px 14px rgba(0,0,0,.18); transition:transform .08s, box-shadow .2s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{background:transparent; color:var(--text); border:1px dashed var(--card-stroke)}
 
     /* Balonlar */
-    .balloon { position: absolute; bottom: -140px; width: 28px; height: 38px; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      background: rgba(255,255,255,.85); box-shadow: inset 0 -6px 14px rgba(0,0,0,.12);
-      animation: fly var(--dur) linear infinite; left: var(--left);
-    }
-    .balloon::after { content:''; position:absolute; left:50%; top:38px; width:2px; height:50px; background: rgba(255,255,255,.65); transform: translateX(-50%); }
-    @keyframes fly { to { transform: translateY(-130vh) translateX(var(-- drift, 0px)); opacity: .95; } }
+    .balloon{position:absolute; bottom:-140px; width:28px; height:38px; border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+      background:rgba(255,255,255,.85); box-shadow:inset 0 -6px 14px rgba(0,0,0,.12);
+      animation:fly var(--dur) linear infinite; left:var(--left)}
+    .balloon::after{content:''; position:absolute; left:50%; top:38px; width:2px; height:50px; background:rgba(255,255,255,.65); transform:translateX(-50%)}
+    @keyframes fly{to{transform:translateY(-130vh) translateX(var(--drift,0px)); opacity:.95}}
 
-    /* Alt bilgi */
-    .footer { position: fixed; inset: auto 0 12px; display:flex; justify-content:center; }
-    .footer .chip { background: rgba(255,255,255,.4); }
+    .footer{position:fixed; inset:auto 0 12px; display:flex; justify-content:center}
+    .footer .chip{background:rgba(255,255,255,.4)}
 
-    @media (max-width: 480px) {
-      .card { padding: 22px; }
-    }
+    @media (max-width:480px){.card{padding:22px}}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- Dekoratif balonlar JS ile eklenecek -->
+    <!-- Balonlar JS ile eklenecek -->
 
     <div class="card" id="card">
       <div class="chip" id="chip">🎂 Doğum Günü Sürprizi</div>
 
-      <!-- KAPALI MEKTUP -->
-      <img src="mektup.png" alt="Mektubu açmak için tıkla" id="mektup" class="mektup"
-           title="Tıkla, mektup açılsın!" />
+      <!-- KAPALI MEKTUP (inline SVG, dış dosya yok) -->
+      <button id="envelope" class="envelope" aria-label="Mektubu aç">
+        <svg viewBox="0 0 200 150" role="img" aria-labelledby="envTitle">
+          <title id="envTitle">Kalpli mektup</title>
+          <!-- zemin gölge -->
+          <ellipse cx="100" cy="128" rx="68" ry="10" fill="rgba(0,0,0,.12)"/>
+          <!-- zarf gövdesi -->
+          <rect x="25" y="45" width="150" height="90" rx="10" fill="#ffffff"/>
+          <!-- ön kat çizgileri -->
+          <path d="M25 60 L100 110 L175 60" fill="none" stroke="#e5e7eb" stroke-width="2"/>
+          <!-- üst kapak (flap) -->
+          <g class="flap">
+            <path d="M25 60 L100 20 L175 60 Z" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>
+            <!-- kalp -->
+            <path class="heart" d="M100 55
+              c -10 -12 -28 -2 -22 12
+              c 5 12 22 20 22 20
+              c 0 0 17 -8 22 -20
+              c 6 -14 -12 -24 -22 -12 Z"
+              fill="#ef4444" />
+          </g>
+        </svg>
+      </button>
 
       <!-- AÇILDIKTAN SONRA GÖRÜNEN MESAJ -->
-      <div id="opened" class="mesaj-wrap">
+      <div id="opened" class="mesaj-wrap" aria-live="polite">
         <h1 class="mesaj-title fade-in">🎉 İyi ki doğdun, <span id="name">Dostum</span>!</h1>
         <p class="mesaj-sub fade-in" id="subtitle">Bugün tamamen senin günün — kutlamaya hazır mısın?</p>
         <p class="mesaj-text fade-in" id="message">Nice mutlu, sağlıklı ve başarı dolu yaşlara! 🎂✨
@@ -164,12 +137,11 @@ Seninle daha nice güzel anılar biriktirmek dileğiyle…</p>
   <!-- Konfeti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <script>
-    // Kısayollar
+    // Kısayollar & parametreler
     const $ = (s) => document.querySelector(s);
     const params = new URLSearchParams(location.search);
     const get = (k, d='') => params.get(k) || d;
 
-    // URL parametreleri
     const p = {
       name: get('name', 'Dostum'),
       message: get('message', ''),
@@ -180,10 +152,10 @@ Seninle daha nice güzel anılar biriktirmek dileğiyle…</p>
 
     // Balonlar
     const wrap = document.querySelector('.wrap');
-    const colors = ['#fff', '#ffe4e6', '#e0f2fe', '#dcfce7', '#ede9fe'];
-    for (let i=0;i<12;i++){
-      const b = document.createElement('div');
-      b.className = 'balloon';
+    const colors = ['#fff','#ffe4e6','#e0f2fe','#dcfce7','#ede9fe'];
+    for(let i=0;i<12;i++){
+      const b=document.createElement('div');
+      b.className='balloon';
       b.style.setProperty('--left', Math.random()*100 + 'vw');
       b.style.setProperty('--dur', (10+Math.random()*10)+'s');
       b.style.background = colors[i%colors.length];
@@ -193,66 +165,57 @@ Seninle daha nice güzel anılar biriktirmek dileğiyle…</p>
 
     // Metinleri doldur
     $('#name').textContent = p.name;
-    if (p.subtitle) $('#subtitle').textContent = p.subtitle;
-    if (p.message) $('#message').textContent = p.message;
-    if (p.from) { const f=$('#from'); f.style.display='block'; f.textContent = `— ${p.from}`; }
+    if(p.subtitle) $('#subtitle').textContent = p.subtitle;
+    if(p.message) $('#message').textContent = p.message;
+    if(p.from){ const f=$('#from'); f.style.display='block'; f.textContent = `— ${p.from}`; }
     $('#chip').textContent = `🎂 ${p.name} için Sürpriz`;
 
-    // Konfeti fonksiyonu
+    // Konfeti
     function popConfetti(){
-      const duration = 1200;
-      const end = Date.now() + duration;
+      const duration = 1200, end = Date.now() + duration;
       (function frame(){
-        confetti({
-          particleCount: 50,
-          startVelocity: 45,
-          spread: 60,
-          origin: { x: Math.random(), y: Math.random()*0.3 + 0.1 }
-        });
-        if (Date.now() < end) requestAnimationFrame(frame);
+        confetti({ particleCount: 50, startVelocity: 45, spread: 60,
+          origin: { x: Math.random(), y: Math.random()*0.3 + 0.1 } });
+        if(Date.now() < end) requestAnimationFrame(frame);
       })();
     }
 
     // Müzik opsiyonel
     let audio; let playing=false;
-    if (p.music) {
+    if(p.music){
       audio = new Audio(p.music);
       const btn = $('#musicBtn');
-      btn.style.display = 'inline-block';
-      btn.addEventListener('click', () => {
-        if (!playing) { audio.play(); btn.textContent='⏸︎ Durdur'; playing=true; }
+      btn.style.display='inline-block';
+      btn.addEventListener('click', ()=>{
+        if(!playing){ audio.play(); btn.textContent='⏸︎ Durdur'; playing=true; }
         else { audio.pause(); btn.textContent='▶︎ Müzik'; playing=false; }
       });
     }
 
-    // İlk açılış animasyonu
+    // İlk giriş animasyonu
     setTimeout(()=> $('#card').classList.add('show'), 200);
 
-    // Mektup açma davranışı
-    const mektup = $('#mektup');
+    // Mektubu aç
+    const envelope = $('#envelope');
     const opened = $('#opened');
-    mektup.addEventListener('click', () => {
-      // mektup kaybolsun
-      mektup.classList.add('hide');
-      setTimeout(() => {
-        mektup.style.display = 'none';
-        opened.classList.add('show');   // mesaj bloğu görünsün
-        $('#actions').style.display = 'flex';
-        popConfetti(); // açıldığında konfeti 🎉
-      }, 600);
+    envelope.addEventListener('click', ()=>{
+      envelope.classList.add('open');
+      setTimeout(()=>{
+        opened.classList.add('show');
+        $('#actions').style.display='flex';
+        popConfetti();
+      }, 620);
     });
 
     // Butonlar
     $('#confettiBtn').addEventListener('click', popConfetti);
-    $('#copyBtn').addEventListener('click', async () => {
-      try {
+    $('#copyBtn').addEventListener('click', async ()=>{
+      try{
         await navigator.clipboard.writeText(location.href);
         const old = $('#copyBtn').textContent;
-        $('#copyBtn').textContent = '✅ Kopyalandı!';
-        setTimeout(()=> $('#copyBtn').textContent = old, 1500);
-      } catch (e) {
-        alert('Linki kopyalayamadım. Adres çubuğundan kopyalayabilirsin.');
-      }
+        $('#copyBtn').textContent='✅ Kopyalandı!';
+        setTimeout(()=> $('#copyBtn').textContent=old, 1500);
+      }catch(e){ alert('Linki kopyalayamadım. Adres çubuğundan kopyalayabilirsin.'); }
     });
   </script>
 </body>
